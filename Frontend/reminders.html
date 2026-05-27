@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tid & Ting</title>
+
+<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/reminders.css">
+</head>
+
+<body>
+<main>
+<nav>
+    <a href="index.html" class="logo-link">
+        <img src="Images/Logo.png" alt="Nettside logo">
+    </a>
+
+    <a href="index.html" class="title-link">
+        <h1>Tid & Ting</h1>
+    </a>
+
+    <div id="button_holders">
+        <a href="calendar.html">
+            <button><b>Kalendar</b></button>
+        </a>
+
+        <a href="reminders.html">
+            <button><b>Påminnelser</b></button>
+        </a>
+    </div>
+</nav>
+
+<div class="container">
+
+    <div class="todo-nettside">
+
+        <h2>To-Do liste 📝</h2>
+
+        <div class="row">
+
+            <input
+                type="text"
+                id="input-box"
+                placeholder="Skriv oppgave"
+            >
+
+            <button id="addBtn">
+                Legg til
+            </button>
+
+        </div>
+
+        <ul id="list-container"></ul>
+
+    </div>
+
+</div>
+</main>
+<footer>
+    <div>© 2026 Tid og ting</div>
+
+    <div class="footer-links">
+        <p><a href="faq.html">FAQ</a></p>
+        <span>|</span>
+        <p><a href="personvernserklæring.html">Personvernserklæring</a></p>
+    </div>
+</footer>
+<script src="js/reminders.js"></script>
+
+</body>
+</html>

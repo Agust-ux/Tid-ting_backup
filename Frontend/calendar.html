@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Timeline Calendar</title>
+
+<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/calendar.css">
+
+</head>
+
+<body>
+<main>
+<nav>
+    <a href="index.html" class="logo-link">
+        <img src="Images/Logo.png" alt="Nettside logo">
+    </a>
+
+    <a href="index.html" class="title-link">
+        <h1>Tid & Ting</h1>
+    </a>
+
+    <div id="button_holders">
+        <a href="calendar.html">
+            <button><b>Kalendar</b></button>
+        </a>
+
+        <a href="reminders.html">
+            <button><b>Påminnelser</b></button>
+        </a>
+    </div>
+</nav>
+
+<br><br><br>
+
+<div class="app">
+
+    <div class="heading">
+
+        <div id="monthInfo">
+            <button id="prevMonth">←</button>
+
+            <h1 id="monthLabel"></h1>
+
+            <button id="nextMonth">→</button>
+        </div>
+
+        <div id="knapper">
+            <button id="addProject">
+                + Legg til nytt prosjekt
+            </button>
+        </div>
+
+    </div>
+
+    <div class="calendar-wrapper">
+
+        <div
+            class="calendar-grid"
+            id="calendar"
+        ></div>
+
+        <div
+            class="timeline-layer"
+            id="timelines"
+        ></div>
+
+    </div>
+
+</div>
+
+<!-- MODAL -->
+
+<div class="modal hidden" id="modal">
+
+    <div class="modal-content">
+
+        <input
+            id="titleInput"
+            placeholder="Project title"
+        >
+
+        <input
+            id="startInput"
+            type="date"
+        >
+
+        <input
+            id="endInput"
+            type="date"
+        >
+
+        <select id="colorInput">
+
+            <option value="#4F8EF7">Blue</option>
+            <option value="#6BCB77">Green</option>
+            <option value="#FFD166">Yellow</option>
+            <option value="#F78C6B">Coral</option>
+            <option value="#B388EB">Lavender</option>
+            <option value="#56CFE1">Cyan</option>
+
+        </select>
+
+        <textarea
+            id="notesInput"
+            placeholder="Notes"
+        ></textarea>
+
+        <div class="modal-actions">
+
+            <button id="saveProject">
+                Save
+            </button>
+
+            <button id="closeModal">
+                Cancel
+            </button>
+
+            <button
+                id="deleteProject"
+                class="hidden"
+            >
+                Delete
+            </button>
+
+            <button
+                id="goToProject"
+                class="hidden"
+            >
+                Go To Project
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+</main>
+<footer>
+    <div>© 2026 Tid og ting</div>
+
+    <div class="footer-links">
+        <p><a href="faq.html">FAQ</a></p>
+        <span>|</span>
+        <p><a href="personvernserklæring.html">Personvernserklæring</a></p>
+    </div>
+</footer>
+
+<script src="js/calendar.js"></script>
+
+</body>
+</html>

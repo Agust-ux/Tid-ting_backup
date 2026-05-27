@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Project</title>
+<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/project.css">
+</head>
+
+<body>
+<main>
+        <nav>
+            <a href="index.html" class="logo-link">
+                <img src="Images/Logo.png" alt="Nettside logo">
+            </a>
+
+            <a href="index.html" class="title-link">
+                <h1>Tid & Ting</h1>
+            </a>
+        <div id="button_holders">
+            <a href="calendar.html"><button><b>Kalendar</b></button></a>
+            <a href="reminders.html"><button><b>Påminnelser</b></button></a>
+        </div>
+    </nav>
+
+<header class="project-hero">
+    <h1 id="projectTitle"></h1>
+    <p id="projectDescription"></p>
+</header>
+
+<main class="container">
+
+    <section class="task-form">
+        <h2>Add Task</h2>
+
+        <input id="taskTitle" placeholder="Title">
+        <textarea id="taskDescription"></textarea>
+
+        <select id="taskPriority">
+            <option>low</option>
+            <option>medium</option>
+            <option>high</option>
+        </select>
+
+        <input id="taskDueDate" type="datetime-local">
+
+        <button id="addTaskBtn">Add</button>
+    </section>
+
+    <section class="task-list">
+        <h2>Tasks</h2>
+        <div id="taskList"></div>
+    </section>
+
+</main>
+
+<!-- MODAL -->
+<div id="editModal" class="modal hidden">
+    <div class="modal-content">
+
+        <h2>Edit Task</h2>
+
+        <input id="editTitle">
+        <textarea id="editDescription"></textarea>
+
+        <select id="editPriority">
+            <option>low</option>
+            <option>medium</option>
+            <option>high</option>
+        </select>
+
+        <input id="editDueDate" type="datetime-local">
+
+        <div class="modal-actions">
+            <button id="saveEdit">Save</button>
+            <button id="closeEdit">Cancel</button>
+        </div>
+
+    </div>
+</div>
+</main>
+<footer>
+    <div>© 2026 Tid og ting</div>
+
+    <div class="footer-links">
+        <p><a href="faq.html">FAQ</a></p>
+        <span>|</span>
+        <p><a href="personvernserklæring.html">Personvernserklæring</a></p>
+    </div>
+</footer>
+<script src="js/project.js"></script>
+</body>
+</html>
