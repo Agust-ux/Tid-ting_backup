@@ -1,33 +1,75 @@
-document.getElementById("loginForm").addEventListener("submit", async (e) => {
-    e.preventDefault();
+document.addEventListener("DOMContentLoaded", () => {
 
-    const email = document.getElementById("email").value;
-    const password = document.getElementById("password").value;
+    const loginForm = document.getElementById("loginForm");
+    const signupBtn = document.getElementById("signupBtn");
+    const errorText = document.getElementById("error");
 
-    const errorEl = document.getElementById("error");
-    errorEl.textContent = "";
+    // Safety check (prevents null crashes)
+    if (!loginForm || !errorText) {
+        console.error("Login form or error element not found in HTML");
+        return;
+    }
 
-    try {
-        const res = await fetch("/api/login", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            credentials: "include",
-            body: JSON.stringify({ email, password })
-        });
+    // =========================
+    // LOGIN
+    // =========================
+    loginForm.addEventListener("submit", async (e) => {
+        e.preventDefault();
 
-        const data = await res.json();
+        const email = document.getElementById("email")?.value?.trim();
+        const password = document.getElementById("password")?.value;
 
-        if (!res.ok) {
-            errorEl.textContent = data.error || "Login failed";
+        errorText.textContent = "";
+
+        if (!email || !password) {
+            errorText.textContent = "Please enter email and password";
             return;
         }
 
-        // success → go to dashboard
-        window.location.href = "/dashboard.html";
+        // Supabase login
+        const { data, error } = await supabaseClient.auth.signInWithPassword({
+            email,
+            password
+        });
 
-    } catch (err) {
-        errorEl.textContent = "Server error";
+        if (error) {
+            errorText.textContent = error.message;
+            return;
+        }
+
+        // Success → go dashboard
+        window.location.href = "dashboard.html";
+    });
+
+    // =========================
+    // SIGN UP
+    // =========================
+    if (signupBtn) {
+        signupBtn.addEventListener("click", async () => {
+
+            const email = document.getElementById("email")?.value?.trim();
+            const password = document.getElementById("password")?.value;
+
+            errorText.textContent = "";
+
+            if (!email || !password) {
+                errorText.textContent = "Enter email and password first";
+                return;
+            }
+
+            const { data, error } = await supabaseClient.auth.signUp({
+                email,
+                password
+            });
+
+            if (error) {
+                errorText.textContent = error.message;
+                return;
+            }
+
+            errorText.textContent =
+                "Account created! Check your email or log in.";
+        });
     }
+
 });

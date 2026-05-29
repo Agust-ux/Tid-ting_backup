@@ -1,15 +1,3 @@
-/**
- * =========================================
- * PROJECT DASHBOARD (LEVEL 6 CLEAN VERSION)
- * -----------------------------------------
- * - Fixed duplicate DOM append bug
- * - Fixed unstable menu event listeners
- * - Improved code structure (API + UI separation)
- * - Stable delete/edit handling
- * - Cleaner event lifecycle
- * =========================================
- */
-
 let editingProjectId = null;
 
 // =========================
@@ -26,78 +14,86 @@ const projectDescription = document.getElementById("projectDescription");
 const projectStart = document.getElementById("projectStart");
 const projectEnd = document.getElementById("projectEnd");
 const projectColor = document.getElementById("projectColor");
-const privacyModal = document.getElementById("privacyModal");
-const acceptPrivacyBtn = document.getElementById("acceptPrivacyBtn");
-
-// Always show modal on page load
-window.addEventListener("load", () => {
-    privacyModal.classList.remove("hidden");
-});
-
-// Close modal (no saving to localStorage)
-acceptPrivacyBtn.addEventListener("click", () => {
-    privacyModal.classList.add("hidden");
-});
 
 // =========================
-// MODAL OPEN (NEW PROJECT)
+// SAFETY CHECK (prevents null crashes)
 // =========================
-openProjectModal.addEventListener("click", () => {
-    editingProjectId = null;
-
-    document.getElementById("modalTitle").textContent = "Nytt prosjekt";
-
-    projectTitle.value = "";
-    projectDescription.value = "";
-    projectStart.value = "";
-    projectEnd.value = "";
-    projectColor.value = "#4F8EF7";
-
-    projectModal.classList.remove("hidden");
-});
+if (!projectGrid) {
+    console.error("Missing #projectGrid in HTML");
+}
 
 // =========================
-// MODAL CLOSE
+// AUTH
 // =========================
-closeModalBtn.addEventListener("click", () => {
-    projectModal.classList.add("hidden");
-});
+async function requireAuth() {
+
+    const { data: { user }, error } =
+        await supabaseClient.auth.getUser();
+
+    if (error) {
+        console.error("Auth error:", error);
+        return null;
+    }
+
+    if (!user) {
+        window.location.href = "index.html";
+        return null;
+    }
+
+    return user;
+}
 
 // =========================
-// API - LOAD PROJECTS
+// LOAD PROJECTS
 // =========================
 async function loadProjects() {
-    try {
-        const res = await fetch("http://localhost:3008/api/projects");
-        const projects = await res.json();
 
-        projectGrid.innerHTML = "";
+    const user = await requireAuth();
+    if (!user) return;
 
-        projects.forEach(project => {
-            const card = createProjectCard(project);
-            projectGrid.appendChild(card); // FIX: ONLY ONCE
-        });
+    const { data, error } = await supabaseClient
+        .from("projects")
+        .select("*")
+        .eq("user_id", user.id)
+        .order("id", { ascending: false });
 
-    } catch (err) {
-        console.error("Failed to load projects:", err);
+    if (error) {
+        console.error("Load projects error:", error);
+        return;
     }
+
+    renderProjects(data || []);
+}
+
+// =========================
+// RENDER PROJECTS
+// =========================
+function renderProjects(projects) {
+
+    projectGrid.innerHTML = "";
+
+    if (!projects || projects.length === 0) {
+        projectGrid.innerHTML = `<p>No projects yet ✨</p>`;
+        return;
+    }
+
+    projects.forEach(project => {
+        const card = createProjectCard(project);
+        projectGrid.appendChild(card);
+    });
 }
 
 // =========================
 // CREATE PROJECT CARD
 // =========================
 function createProjectCard(project) {
+
     const card = document.createElement("div");
     card.className = "project-card";
-    card.style.borderLeft = `12px solid ${project.color}`;
+    card.style.borderLeft = `12px solid ${project.color || "#4F8EF7"}`;
 
-    const startDate = project.start_date
-        ? project.start_date.split("T")[0]
-        : "";
-
-    const endDate = project.end_date
-        ? project.end_date.split("T")[0]
-        : "";
+    const start = project.start_date?.split("T")[0] || "";
+    const end = project.end_date?.split("T")[0] || "";
 
     card.innerHTML = `
         <div class="project-header">
@@ -107,147 +103,154 @@ function createProjectCard(project) {
                 <button class="menu-btn">⋮</button>
 
                 <div class="menu hidden">
-                    <button class="menu-item edit">Rediger</button>
-                    <button class="menu-item delete">Slett</button>
+                    <button class="menu-item edit">Edit</button>
+                    <button class="menu-item delete">Delete</button>
                 </div>
             </div>
         </div>
 
         <p>${project.description || ""}</p>
-
-        <div style="margin-top:10px;">
-            <small>${startDate} → ${endDate}</small>
-        </div>
-
-        <button class="details-btn">Se Prosjekt Detaljer</button>
+        <small>${start} → ${end}</small>
     `;
 
     // =========================
-    // MENU TOGGLE (LOCAL ONLY)
+    // OPEN PROJECT PAGE (click card)
+    // =========================
+    card.addEventListener("click", () => {
+        window.location.href = `project.html?id=${project.id}`;
+    });
+
+    // =========================
+    // MENU TOGGLE
     // =========================
     const menuBtn = card.querySelector(".menu-btn");
     const menu = card.querySelector(".menu");
 
     menuBtn.addEventListener("click", (e) => {
         e.stopPropagation();
-
-        document.querySelectorAll(".menu").forEach(m => {
-            if (m !== menu) m.classList.add("hidden");
-        });
-
         menu.classList.toggle("hidden");
     });
 
-    // =========================
-    // CLOSE MENUS (GLOBAL SAFE VERSION)
-    // =========================
-    document.addEventListener("click", closeAllMenus);
-
-    function closeAllMenus() {
-        document.querySelectorAll(".menu").forEach(m => {
-            m.classList.add("hidden");
-        });
-    }
+    document.addEventListener("click", () => {
+        menu.classList.add("hidden");
+    });
 
     // =========================
-    // EDIT PROJECT
+    // EDIT
     // =========================
-    const editBtn = card.querySelector(".menu-item.edit");
+    card.querySelector(".edit").addEventListener("click", (e) => {
+        e.stopPropagation();
 
-    editBtn.addEventListener("click", () => {
         editingProjectId = project.id;
-
-        document.getElementById("modalTitle").textContent = "Edit Project";
 
         projectTitle.value = project.title;
         projectDescription.value = project.description || "";
         projectStart.value = project.start_date?.split("T")[0] || "";
         projectEnd.value = project.end_date?.split("T")[0] || "";
-        projectColor.value = project.color;
+        projectColor.value = project.color || "#4F8EF7";
 
         projectModal.classList.remove("hidden");
     });
 
     // =========================
-    // DELETE PROJECT (FIXED)
+    // DELETE
     // =========================
-    const deleteBtn = card.querySelector(".menu-item.delete");
+    card.querySelector(".delete").addEventListener("click", async (e) => {
+        e.stopPropagation();
 
-    deleteBtn.addEventListener("click", async () => {
-        const confirmed = confirm(`Delete "${project.title}"?`);
-        if (!confirmed) return;
+        if (!confirm("Delete project?")) return;
 
-        try {
-            await fetch(`http://localhost:3008/api/projects/${project.id}`, {
-                method: "DELETE"
-            });
+        const { error } = await supabaseClient
+            .from("projects")
+            .delete()
+            .eq("id", project.id);
 
-            await loadProjects();
-        } catch (err) {
-            console.error("Delete failed:", err);
+        if (error) {
+            console.error("Delete error:", error);
+            return;
         }
-    });
 
-    // =========================
-    // NAV TO PROJECT DETAILS
-    // =========================
-    const detailsBtn = card.querySelector(".details-btn");
-
-    detailsBtn.addEventListener("click", () => {
-        window.location.href = `project.html?id=${project.id}`;
+        await loadProjects();
     });
 
     return card;
 }
 
 // =========================
-// SAVE PROJECT (CREATE / UPDATE)
+// OPEN MODAL (new project)
 // =========================
-saveProjectBtn.addEventListener("click", async () => {
-    if (!projectTitle.value || !projectStart.value || !projectEnd.value) {
-        alert("Fill required fields");
-        return;
-    }
+if (openProjectModal) {
+    openProjectModal.addEventListener("click", () => {
 
-    const projectData = {
-        title: projectTitle.value,
-        description: projectDescription.value,
-        color: projectColor.value,
-        start_date: projectStart.value,
-        end_date: projectEnd.value
-    };
+        editingProjectId = null;
 
-    try {
-        const url = editingProjectId
-            ? `http://localhost:3008/api/projects/${editingProjectId}`
-            : "http://localhost:3008/api/projects";
-
-        const method = editingProjectId ? "PUT" : "POST";
-
-        await fetch(url, {
-            method,
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(projectData)
-        });
-
-        // reset UI
         projectTitle.value = "";
         projectDescription.value = "";
         projectStart.value = "";
         projectEnd.value = "";
         projectColor.value = "#4F8EF7";
 
-        editingProjectId = null;
+        projectModal.classList.remove("hidden");
+    });
+}
+
+// =========================
+// CLOSE MODAL
+// =========================
+if (closeModalBtn) {
+    closeModalBtn.addEventListener("click", () => {
         projectModal.classList.add("hidden");
+    });
+}
 
+// =========================
+// SAVE PROJECT
+// =========================
+if (saveProjectBtn) {
+    saveProjectBtn.addEventListener("click", async () => {
+
+        const user = await requireAuth();
+        if (!user) return;
+
+        const payload = {
+            title: projectTitle.value,
+            description: projectDescription.value,
+            start_date: projectStart.value,
+            end_date: projectEnd.value,
+            color: projectColor.value,
+            user_id: user.id
+        };
+
+        let result;
+
+        if (editingProjectId) {
+            result = await supabaseClient
+                .from("projects")
+                .update(payload)
+                .eq("id", editingProjectId);
+        } else {
+            result = await supabaseClient
+                .from("projects")
+                .insert([payload]);
+        }
+
+        if (result.error) {
+            console.error("Save error:", result.error);
+            return;
+        }
+
+        projectModal.classList.add("hidden");
         await loadProjects();
-
-    } catch (err) {
-        console.error("Save failed:", err);
-    }
-});
+    });
+}
 
 // =========================
 // INIT
 // =========================
-loadProjects();
+(async function init() {
+
+    const user = await requireAuth();
+    if (!user) return;
+
+    await loadProjects();
+})();
