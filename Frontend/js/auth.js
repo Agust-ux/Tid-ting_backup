@@ -1,12 +1,11 @@
-async function requireAuth() {
+export async function requireAuth() {
+    const { data: { user } } =
+        await supabase.auth.getUser();
 
-    const { data, error } =
-        await supabaseClient.auth.getUser();
-
-    if (error || !data.user) {
+    if (!user) {
         window.location.href = "/index.html";
         return null;
     }
 
-    return data.user;
+    return user;
 }
