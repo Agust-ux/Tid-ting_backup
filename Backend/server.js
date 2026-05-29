@@ -4,6 +4,9 @@
 const express = require("express");
 const path = require("path");
 const mariadb = require("mariadb");
+const session = require("express-session");
+const cors = require("cors");
+
 require("dotenv").config();
 
 const app = express();

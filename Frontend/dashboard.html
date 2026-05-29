@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Prosjekt To Do Liste</title>
+<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/index.css">
+
+</head>
+
+<body>
+    <main>
+        <nav>
+            <a href="dashboard.html" class="logo-link">
+                <img src="Images/Logo.png" alt="Nettside logo">
+            </a>
+
+            <a href="dashboard.html" class="title-link">
+                <h1>Tid & Ting</h1>
+            </a>
+        <div id="button_holders">
+            <a href="calendar.html"><button><b>Kalendar</b></button></a>
+            <a href="reminders.html"><button><b>Påminnelser</b></button></a>
+        </div>
+    </nav>
+<br>
+<div class="header">
+    Prosjekt To Do Liste
+</div>
+
+<div class="project-grid" id="projectGrid"></div>
+
+<div class="add-project">
+
+    <button id="openProjectModal">
+        + Legg til nytt prosjekt
+    </button>
+
+</div>
+
+<div class="modal hidden" id="projectModal">
+    <div class="modal-content">
+        <h2 id="modalTitle">Nytt prosjekt</h2>
+
+        <input
+            type="text"
+            id="projectTitle"
+            placeholder="Project title"
+        >
+
+        <textarea
+            id="projectDescription"
+            placeholder="Description"
+        ></textarea>
+
+        <input
+            type="date"
+            id="projectStart"
+        >
+
+        <input
+            type="date"
+            id="projectEnd"
+        >
+
+        <select id="projectColor">
+            <option value="#4F8EF7">Blue</option>
+            <option value="#6BCB77">Green</option>
+            <option value="#FFD166">Yellow</option>
+            <option value="#F78C6B">Coral</option>
+            <option value="#B388EB">Lavender</option>
+            <option value="#56CFE1">Cyan</option>
+        </select>
+
+        <div class="modal-buttons">
+            <button id="saveProjectBtn">
+                Save Project
+            </button>
+
+            <button id="closeModalBtn">
+                Cancel
+            </button>
+        </div>
+    </div>
+
+</div>
+
+<div class="modal hidden" id="privacyModal">
+    <div class="modal-contentp">
+        <h2>Personvern</h2>
+
+        <p>
+            Vi samler inn grunnleggende informasjon som brukerkonto, oppgaver og aktivitet
+            for å kunne gi deg en fungerende to-do liste. Data brukes kun til funksjonalitet
+            i appen og deles ikke med tredjeparter uten behov.
+        </p>
+
+        <p style="margin-top:10px;">
+            Les hele personvernserklæringen her:
+        </p>
+
+        <div class="modal-buttons" style="flex-direction: column;">
+            <a href="personvernserklæring.html">
+                <button style="width:100%;">
+                    Personvernserklæring
+                </button>
+            </a>
+
+            <button id="acceptPrivacyBtn" style="width:100%; background:#2ecc71; color:white;">
+                Jeg forstår
+            </button>
+        </div>
+    </div>
+</div>
+</main>
+<footer>
+    <div>© 2026 Tid og ting</div>
+
+    <div class="footer-links">
+        <p><a href="faq.html">FAQ</a></p>
+        <span>|</span>
+        <p><a href="personvernserklæring.html">Personvernserklæring</a></p>
+    </div>
+</footer>
+<script src="js/script.js"></script>
+</body>
+</html>
