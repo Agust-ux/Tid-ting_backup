@@ -12,7 +12,7 @@
 body {
   margin: 0;
   font-family: system-ui;
-  background: var(--color2);
+  background: #474747;
   color: var(--text);
 }
 
